@@ -13,7 +13,17 @@ import re
 import difflib
 from time import sleep
 
-df = pd.read_csv('./extra_movies.csv')
+df = pd.DataFrame(['A Star is Born' ,'Titanic'], columns= ['Movies'])
+
+def getIndexGenre(movie_container):
+    for index, value in enumerate(movie_container):
+        if value.td.b.text == 'Genre:':
+            return index
+
+def getIndexKeyword(movie_container):
+    for index, value in enumerate(movie_container):
+        if value.td.b.text == 'Keywords:':
+            return index
 
 def scrape_genre_keywords(name):
     print(name)
@@ -37,31 +47,24 @@ def scrape_genre_keywords(name):
         genre = None
         keywords = None
     
-    def getIndexGenre(movie_container):
-        for index, value in enumerate(movie_container):
-            if value.td.b.text == 'Genre:':
-                return index
-            
-    def getIndexKeyword(movie_container):
-        for index, value in enumerate(movie_container):
-            if value.td.b.text == 'Keywords:':
-                return index
     try:
         i = getIndexGenre(movie_container)
         genre = movie_container[i].find_all('td')[1].text
     except:
         genre = None
+    
     try:
         j = getIndexKeyword(movie_container)
         keywords_tmp = movie_container[j].find_all('a')
         keywords = [keyword.text for keyword in keywords_tmp]
     except: 
         keywords = None
+    
     return [name,movie_name, genre, keywords]
 
 new_df = pd.DataFrame(list(map(scrape_genre_keywords, df['Movie'])),\
                   columns = ['query_name', 'scrapped_name', 'genre', 'keywords'])
 
-scrapped_name = actor_container.find_all('td')[1].text
-scrapped_url = 'https://www.the-numbers.com' + actor_container.find_all('td')[1].a.get('href') \+ '#tab=acting'
-scrapped_match = actor_container.find_all('td')[0].text
+# scrapped_name = actor_container.find_all('td')[1].text
+# scrapped_url = 'https://www.the-numbers.com' + actor_container.find_all('td')[1].a.get('href') \+ '#tab=acting'
+# scrapped_match = actor_container.find_all('td')[0].text
